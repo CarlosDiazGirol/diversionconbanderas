@@ -87,17 +87,9 @@ function showCountryInfo(country) {
       <p>Capital: ${country.capital}</p>
       <p>Población: ${country.population}</p>
       <p>Lado de la carretera: ${country.car.side}</p>
-      <iframe src="${country.maps.googleMaps}" 
-        width="600" 
-        height="450" 
-        style="border:0;" 
-        allowfullscreen="" 
-        loading="lazy" 
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
     </div>
   </div>
-  <button onclick="hideCountryInfo()">Cerrar</button>
+  <button class="close" onclick="hideCountryInfo()">Cerrar</button>
   `;
   countryInfoElement.innerHTML = countryInfoHTML;
   countryInfoElement.classList.remove('hidden');
