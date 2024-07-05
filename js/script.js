@@ -1,101 +1,91 @@
-document.addEventListener('DOMContentLoaded', () => {
-  getCountries()
-    .then(countries => displayCountries(countries))
-    .catch(error => console.error('Error fetching or displaying countries:', error));
-});
+const countriesList = document.getElementById("countries-list")
+const info = document.getElementById("info")
 
-async function getCountries() {
+// fetch sin ASYNC/AWAIT para comparar con el código
+// fetch("https://restcountries.com/v3/all")
+// .then(response => response.json())
+// .then(data => console.log(data))
+// .catch(err => console.log("Esdte es el error", err))
+
+const getCountries = async () => {
   try {
-    const response = await fetch('https://restcountries.com/v3/all');
-    const countries = await response.json();
-    const sortedCountries = sortCountriesAlphabetically(countries);
-    return sortedCountries;
-  } catch (error) {
-    throw error;
+    const response = await fetch("https://restcountries.com/v3/all")
+    const countries = await response.json()
+    await sortedCountries(countries)
+    return countries
+  } catch (err) {
+    console.log("este es el error", err)
   }
 }
 
-function sortCountriesAlphabetically(countries) {
-  return countries.sort((a, b) => {
-    const nameA = a.name.common.toUpperCase();
-    const nameB = b.name.common.toUpperCase();
-    return nameA.localeCompare(nameB);
-  });
+const sortedCountries = (countries) => {
+  countries.sort((a, b) => {
+    const nameA = a.name.official.toUpperCase()
+    const nameB = b.name.official.toUpperCase()
+    return nameA.localeCompare(nameB)
+  })
 }
 
-// function displayCountries(countries) {
-//   const countriesList = document.getElementById('countries-list');
-//   countriesList.innerHTML = '';
+getCountries().then(countries => {
+  countries.forEach((country, index) => {
+    let template = `
+      <div class="card"> 
+      <img src=${country.flags[0]} alt=${country.name.official} />
+      <h2>${country.name.official}</h2>
+      </div>
+    `
+    countriesList.insertAdjacentHTML("beforeend", template)
 
-//   if (countries.length === 0) {
-//     countriesList.innerHTML = 'No se encontraron países.';
-//     return;
-//   }
+    const card = document.querySelectorAll(".card")[index]
 
-//   // const countriesHTML = countries.map(country => `
-//   //   <div class="country">
-//   //     <img src="${country.flags[0]}" alt="${country.name.common} flag">
-//   //     <h2>${country.name.common}</h2>
-//   //   </div>
-//   // `).join('');
+    card.addEventListener("click", () => {
+      let templateInfo = `
+        <div class="infodetalle">
+          <img src="${country.flags[0]}" alt="${country.name.common} flag">
+            <h2>${country.name.common}</h2>
+            <p>Capital: ${country.capital}</p>
+            <p>Población: ${country.population}</p>
+            <p>Lado de la carretera: ${country.car.side}</p>
+          <button onclick="closeInfo()">cerrar</button>
+        </div>
+      `
+      info.innerHTML = templateInfo
+      info.classList.add("visible")
+    })
+  });
+})
 
-//   countriesList.innerHTML = countriesHTML;
+const closeInfo = () => info.classList.remove("visible")
+
+// Otra solución si queremos usar innerHTML y no crear nodos con insertAdjacentHTML.
+
+// getCountries().then(countries => {
+//   countries.forEach((country) => {
+//     let template = `
+//       <div class="card"> 
+//       <img src=${country.flags[0]} alt=${country.name.official} />
+//       <h2>${country.name.official}</h2>
+//       </div>
+//     `
+//     countriesList.innerHTML += template
+//   });
 
 //   countries.forEach((country, index) => {
-//     const countryElement = document.querySelectorAll('.country')[index];
-//     countryElement.addEventListener('click', () => {
-//       showCountryInfo(country);
-//     });
-//   });
-// }
-function displayCountries(countries) {
-  const countriesList = document.getElementById('countries-list');
-  countriesList.innerHTML = '';
-
-  if (countries.length === 0) {
-    countriesList.innerHTML = 'No se encontraron países.';
-    return;
-  }
-
-  countries.forEach(country => {
-    const countryHTML = `
-      <div class="country">
-        <img src="${country.flags[0]}" alt="${country.name.common} flag">
-        <h2>${country.name.common}</h2>
-      </div>
-    `;
-    
-    countriesList.innerHTML += countryHTML;
-  });
-
-  countries.forEach((country, index) => {
-    const countryElement = document.querySelectorAll('.country')[index];
-    countryElement.addEventListener('click', () => {
-      showCountryInfo(country);
-    });
-  });
-}
-
-function showCountryInfo(country) {
-  const countryInfoElement = document.getElementById('country-info');
-  console.log(country)
-  const countryInfoHTML = `
-  <div class="container-info">
-    <img src="${country.flags[0]}" alt="${country.name.common} flag">
-    <div>
-      <h2>${country.name.common}</h2>
-      <p>Capital: ${country.capital}</p>
-      <p>Población: ${country.population}</p>
-      <p>Lado de la carretera: ${country.car.side}</p>
-    </div>
-  </div>
-  <button class="close" onclick="hideCountryInfo()">Cerrar</button>
-  `;
-  countryInfoElement.innerHTML = countryInfoHTML;
-  countryInfoElement.classList.remove('hidden');
-}
-
-function hideCountryInfo() {
-  const countryInfoElement = document.getElementById('country-info');
-  countryInfoElement.classList.add('hidden');
-}
+//     const card = document.querySelectorAll(".card")[index]
+//     card.addEventListener("click", () => {
+//       let templateInfo = `
+//         <div class="infodetalle">
+//           <img src="${country.flags[0]}" alt="${country.name.common} flag">
+//             <h2>${country.name.common}</h2>
+//             <p>Capital: ${country.capital}</p>
+//             <p>Población: ${country.population}</p>
+//             <p>Lado de la carretera: ${country.car.side}</p>
+//           <button onclick="closeInfo()">cerrar</button>
+//         </div>
+//       `
+//       info.innerHTML = templateInfo
+//       info.classList.add("visible")
+//     })
+//   })
+// })
+  
